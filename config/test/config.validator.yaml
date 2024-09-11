@@ -12,9 +12,6 @@ run:
 enable:
   retrieve: true
 
-enable:
-  retrieve: auto
-
 clustering:
   temporal:
     resolution_elec: 365H
