@@ -46,7 +46,7 @@ jobs:
           echo -e "$SPDX_HEADER" | cat - envs/${{ matrix.suffix }}-pinned.yaml > temp && mv temp envs/${{ matrix.suffix }}-pinned.yaml
 
       - name: Cache environment files
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.suffix }}-pinned
           path: envs/${{ matrix.suffix }}-pinned.yaml
