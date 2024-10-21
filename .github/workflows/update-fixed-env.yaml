@@ -44,10 +44,10 @@ jobs:
         run: |
           if [[ "${{ matrix.os }}" == *"windows"* ]]; then
             $SPDX_HEADER = "# SPDX-FileCopyrightText: 2017-2024 The PyPSA-Eur Authors`n# SPDX-License-Identifier: CC0-1.0`n"
-            echo $SPDX_HEADER | cat - envs/${{ matix-os }}-pinned.yaml > temp; mv temp envs/${{ matix-os }}-pinned.yaml
+            echo $SPDX_HEADER | cat - envs/${{ matrix-os }}-pinned.yaml > temp; mv temp envs/${{ matrix-os }}-pinned.yaml
           else
             SPDX_HEADER="# SPDX-FileCopyrightText: 2017-2024 The PyPSA-Eur Authors\n# SPDX-License-Identifier: CC0-1.0\n"
-            echo -e "$SPDX_HEADER" | cat - envs/${{ matix-os }}-pinned.yaml > temp && mv temp envs/${{ matix-os }}-pinned.yaml
+            echo -e "$SPDX_HEADER" | cat - envs/${{ matrix-os }}-pinned.yaml > temp && mv temp envs/${{ matrix-os }}-pinned.yaml
           fi
 
 
