@@ -41,6 +41,10 @@ jobs:
         shell: bash -l {0}
 
     steps:
+    - if: matrix.os == 'windows' && github.event_name != 'schedule'
+      run: echo "Skipping tests on Windows for non-cron jobs" && exit 0
+
+
     - uses: actions/checkout@v4
 
     - name: Setup secrets & cache dates
