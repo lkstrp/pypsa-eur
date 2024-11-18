@@ -20,6 +20,8 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  BASE_ENV: envs/environment.yaml
 
 jobs:
   run-tests:
@@ -36,6 +38,10 @@ jobs:
         shell: bash -l {0}
 
     steps:
+    - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
     - name: Setup env file path (ubuntu)
       if: matrix.os == 'ubuntu'
       run: |
@@ -46,7 +52,14 @@ jobs:
       run: |
         echo "env_file=envs/${{ matrix.os }}-pinned.yaml" >> $GITHUB_ENV
 
-    - uses: actions/checkout@v4
+    - name: Use base env file if it was changed
+      run: |
+        if git diff --name-only master | grep '${{ env.BASE_ENV }}'; then
+          echo "Base env ${{ env.BASE_ENV }} changed. Using it instead of pinned envs."
+          echo "env_file=${{ env.BASE_ENV }}" >> $GITHUB_ENV
+        else
+          echo "Base env ${{ env.BASE_ENV }} not changed. Using pinned envs."
+        fi
 
     - name: Setup cache keys
       run: |
@@ -111,7 +124,7 @@ jobs:
     # Only run checks if package is not pinned
     - name: Check if inhouse package is pinned
       run: |
-        grep_line=$(grep -- '- ${{ matrix.inhouse }}' envs/environment.yaml)
+        grep_line=$(grep -- '- ${{ matrix.inhouse }}' ${{ env.BASE_ENV }})
         if [[ $grep_line == *"<"* || $grep_line == *"=="* ]]; then
             echo "pinned=true" >> $GITHUB_ENV
         else
