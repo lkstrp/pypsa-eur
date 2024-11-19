@@ -19,7 +19,7 @@ dependencies:
 # Dependencies of the workflow itself
 - dask
 - xlrd
-- openpyxl!=3.1.1
+- openpyxl
 - seaborn
 - snakemake-minimal>=8.14
 - memory_profiler
@@ -56,7 +56,7 @@ dependencies:
 # GIS dependencies:
 - cartopy
 - descartes
-- rasterio<1.4
+- rasterio
 
 - pip:
   - gurobipy
