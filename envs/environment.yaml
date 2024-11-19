@@ -36,7 +36,7 @@ dependencies:
 - scipy
 - glpk
 - shapely>=2.0
-- pyscipopt
+- pyscipopt<5.2
 - matplotlib
 - proj
 - fiona
