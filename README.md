@@ -3,6 +3,8 @@ SPDX-FileCopyrightText: 2017-2024 The PyPSA-Eur Authors
 SPDX-License-Identifier: CC-BY-4.0
 -->
 
+Some Test
+
 ![GitHub release (latest by date including pre-releases)](https://img.shields.io/github/v/release/pypsa/pypsa-eur?include_prereleases)
 [![Test workflows](https://github.com/pypsa/pypsa-eur/actions/workflows/test.yaml/badge.svg)](https://github.com/pypsa/pypsa-eur/actions/workflows/test.yaml)
 [![Documentation](https://readthedocs.org/projects/pypsa-eur/badge/?version=latest)](https://pypsa-eur.readthedocs.io/en/latest/?badge=latest)
