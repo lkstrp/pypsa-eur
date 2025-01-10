@@ -4,6 +4,8 @@
 
 FROM condaforge/mambaforge
 
+LABEL org.opencontainers.image.source https://github.com/PyPSA/pypsa-eur
+
 RUN conda update -n base conda
 RUN conda install -n base conda-libmamba-solver
 RUN conda config --set solver libmamba
@@ -26,5 +28,7 @@ ENV PATH=/opt/conda/envs/pypsa-eur/bin:$PATH
 RUN rm -r temp
 RUN conda clean -afy && \
     rm -rf /tmp/*
+
+RUN touch /.entrypoint.sh
 
 CMD ["bash"]
