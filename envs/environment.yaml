@@ -49,9 +49,9 @@ dependencies:
 
 # Solver
 - highspy
-- pyscipopt
 - glpk
-
+- pyscipopt
+- scip!=9.2.0 # dependency of pyscipopt, temporary fix
 
 # Keep in conda environment when calling ipython
 - ipython
