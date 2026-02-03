@@ -2658,7 +2658,7 @@
       "description": "Configuration for top level `logging` settings.",
       "properties": {
         "level": {
-          "default": "INFO",
+          "default": "DEBUG",
           "description": "Restrict console outputs to all infos, warning or errors only",
           "enum": [
             "DEBUG",
@@ -7727,7 +7727,7 @@
       "description": "Configuration for top level `logging` settings.",
       "properties": {
         "level": {
-          "default": "INFO",
+          "default": "DEBUG",
           "description": "Restrict console outputs to all infos, warning or errors only",
           "enum": [
             "DEBUG",
