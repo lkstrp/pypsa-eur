@@ -44,6 +44,7 @@ sync-locks = """
 """
 
 [dependencies]
+cryptography = "==42.0.0"
 atlite = ">=0.3,!=0.5.0"
 bokeh = ">=3.8.0"
 cartopy = ">=0.25.0"
