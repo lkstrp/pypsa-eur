@@ -17,6 +17,7 @@ jobs:
     permissions:
       security-events: write
       contents: write   # required by anchore/sbom-action dependency-snapshot upload
+      actions: read     # required by dawidd6/action-download-artifact on fork PRs
     defaults:
       run:
         shell: bash -l {0}
@@ -68,7 +69,9 @@ jobs:
         path: ${{ steps.scan.outputs.sarif }}
         retention-days: 30
 
-    - name: Download master baseline
+    # Fork PRs cant upload SARIF to code scanning (no token write access), so
+    # diff against the master baseline artifact here instead
+    - name: Download master baseline (fork PRs only)
       if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
       uses: dawidd6/action-download-artifact@v11
       with:
@@ -78,12 +81,16 @@ jobs:
         if_no_artifact_found: fail
         path: master-baseline
 
-    - name: Fail on new CVEs
+    - name: Fail on new CVEs (fork PRs only)
       if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+      env:
+        SARIF_PATH: ${{ steps.scan.outputs.sarif }}
       run: |
+        [ -s master-baseline/output ] || { echo "::error::baseline SARIF missing"; exit 2; }
+        [ -s "$SARIF_PATH" ]          || { echo "::error::PR SARIF missing"; exit 2; }
         new=$(comm -23 \
-          <(jq -r '.runs[].results[] | select(.level == "error") | .ruleId' "${{ steps.scan.outputs.sarif }}" | sort -u) \
-          <(jq -r '.runs[].results[] | select(.level == "error") | .ruleId' master-baseline/*.sarif | sort -u))
+          <(jq -r '.runs[].results[] | select(.level == "error") | .ruleId' "$SARIF_PATH"          | sort -u) \
+          <(jq -r '.runs[].results[] | select(.level == "error") | .ruleId' master-baseline/output | sort -u))
         if [ -n "$new" ]; then
           echo "::error::New high+ CVEs vs master:"
           printf '%s\n' "$new"
