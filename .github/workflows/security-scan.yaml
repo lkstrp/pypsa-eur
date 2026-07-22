@@ -55,15 +55,16 @@ jobs:
             )' "${{ steps.scan.outputs.sarif }}" > normalized.sarif
         mv normalized.sarif "${{ steps.scan.outputs.sarif }}"
 
+    # Master only. The normalize step above puts every alert on pixi.lock, so on a PR that edits
+    # pixi.lock code scanning treats them all as newly introduced and fails. PRs use the CVE diff below.
     - name: Upload SARIF
-      if: github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+      if: github.ref == 'refs/heads/master'
       uses: github/codeql-action/upload-sarif@v4
       with:
         sarif_file: ${{ steps.scan.outputs.sarif }}
         category: pixi-vuln-scan
 
-    # Fork PRs cant upload SARIF (no access to token), so code scannings native diff
-    # does not apply. This builds our own diff from a master-uploaded SARIF artifact instead.
+    # Baseline for the PR CVE diff below.
     - name: Upload SARIF as artifact
       if: github.ref == 'refs/heads/master'
       uses: actions/upload-artifact@v7
@@ -72,10 +73,9 @@ jobs:
         path: ${{ steps.scan.outputs.sarif }}
         retention-days: 30
 
-    # Fork PRs cant upload SARIF to code scanning (no token write access), so
-    # diff against the master baseline artifact here instead
-    - name: Download master baseline (fork PRs only)
-      if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    # All PRs gate on new CVEs vs the master baseline (code scanning's native PR diff is unusable here).
+    - name: Download master baseline
+      if: github.event_name == 'pull_request'
       uses: dawidd6/action-download-artifact@v21
       with:
         workflow: security-scan.yaml
@@ -84,8 +84,8 @@ jobs:
         if_no_artifact_found: fail
         path: master-baseline
 
-    - name: Fail on new CVEs (fork PRs only)
-      if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name != github.repository
+    - name: Fail on new CVEs
+      if: github.event_name == 'pull_request'
       env:
         SARIF_PATH: ${{ steps.scan.outputs.sarif }}
       run: |
