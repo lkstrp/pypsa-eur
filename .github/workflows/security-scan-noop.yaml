@@ -1,0 +1,15 @@
+# Twin of security-scan.yaml with an inverse path filter, so the
+# "SBOM and vulnerability scan" check always reports and can be a
+# required status check without hanging PRs that don't touch pixi.lock.
+name: Security scan
+on:
+  pull_request:
+    branches: [master]
+    paths-ignore: [pixi.lock]
+
+jobs:
+  scan:
+    name: SBOM and vulnerability scan
+    runs-on: ubuntu-latest
+    steps:
+    - run: echo "pixi.lock unchanged, no scan needed"
